@@ -1,0 +1,16 @@
+{
+  "name": "turnos-barberia",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w api",
+    "dev:api:mem": "npm run dev:mem -w api",
+    "dev:web": "npm run dev -w web",
+    "build:web": "npm run build -w web",
+    "test": "npm test -w api",
+    "smoke": "node scripts/smoke.mjs"
+  }
+}

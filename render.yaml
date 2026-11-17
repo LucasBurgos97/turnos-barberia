@@ -1,0 +1,59 @@
+# Render Blueprint (Render → New → Blueprint → elegir este repositorio).
+# Crea la API. Los valores marcados `sync: false` se completan a mano en el panel de Render
+# (ver docs/deploy.md). Nada secreto se guarda en este archivo.
+services:
+  - type: web
+    name: turnos-api
+    runtime: node
+    plan: free
+    # La más cercana a Supabase São Paulo entre las de Render
+    region: virginia
+    buildCommand: npm ci -w api --omit=dev
+    startCommand: npm start -w api
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: PUBLIC_WEB_URL
+        sync: false
+      - key: DEFAULT_AREA_CODE
+        value: "387"
+      - key: CRON_SECRET
+        generateValue: true
+      - key: WHATSAPP_MODE
+        value: cloud
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        generateValue: true
+
+  # Opcional y DE PAGO (desde USD 1/mes): cron de recordatorios en Render.
+  # La alternativa gratis es pg_cron en Supabase (docs/deploy.md, paso 6). Para usar esta,
+  # descomentá el bloque.
+  # - type: cron
+  #   name: turnos-recordatorios
+  #   runtime: node
+  #   region: virginia
+  #   schedule: "*/10 * * * *"
+  #   buildCommand: "true"
+  #   startCommand: node api/scripts/run-reminders.js
+  #   envVars:
+  #     - key: NODE_VERSION
+  #       value: "22"
+  #     - key: API_URL
+  #       fromService: { type: web, name: turnos-api, property: host }
+  #     - key: CRON_SECRET
+  #       fromService: { type: web, name: turnos-api, envVarKey: CRON_SECRET }
